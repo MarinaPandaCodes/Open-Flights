@@ -29,7 +29,7 @@ Airline.create([
   }
 ])
 
-
+airlines = Airline.all
 
 
 reviews = Review.create([
