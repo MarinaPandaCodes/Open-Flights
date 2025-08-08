@@ -40,10 +40,12 @@
 .review-form {
   display: grid;
   gap: 2.5rem;
+  padding: 1rem; /* Added padding so fields don’t touch container border */
 }
 
 .form-field {
   position: relative;
+  margin: 0 0.5rem; /* Small horizontal margin so inputs don’t touch border */
 }
 
 .input-label {

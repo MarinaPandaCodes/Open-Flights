@@ -4,14 +4,24 @@ import './Home.css';
 const Home = () => {
   return (
     <div className="home-container">
+      <div className="auth-buttons top-right">
+        <Link to="/login" className="auth-btn">Login</Link>
+        <Link to="/signup" className="auth-btn">Sign Up</Link>
+      </div>
+
       <header className="hero-section">
         <div className="hero-content">
-          <h1 className="hero-title"><span className="gradient-text">Elevate</span> Your Travel Experience</h1>
-          <p className="hero-subtitle">Harness AI-powered insights to navigate the skies with confidence</p>
+          <h1 className="hero-title">
+            <span className="gradient-text">Elevate</span> Your Travel Experience
+          </h1>
+          <p className="hero-subtitle">
+            Harness AI-powered insights to navigate the skies with confidence
+          </p>
           <div className="cta-container">
-            <Link to="/airlines" className="cta-button pulse">
+              <Link to="/signup" className="cta-button pulse">
               Explore Airlines <span className="arrow">→</span>
-            </Link>
+              </Link>
+
             <div className="tech-circle"></div>
           </div>
         </div>
@@ -19,7 +29,9 @@ const Home = () => {
       </header>
 
       <section className="features-section">
-        <h2 className="section-title">Why <span className="highlight">SkyMetrics</span></h2>
+        <h2 className="section-title">
+          Why <span className="highlight">SkyMetrics</span>
+        </h2>
         <div className="features-grid">
           <div className="feature-card">
             <div className="feature-icon holographic">🛰️</div>
@@ -72,7 +84,7 @@ const Home = () => {
             <Link to="/analytics" className="nav-link">Analytics</Link>
           </div>
           <div className="footer-cta-container">
-            <Link to="/airlines" className="footer-cta glow">
+            <Link to="/signup" className="footer-cta glow">
               Launch Dashboard <span className="arrow">↗</span>
             </Link>
           </div>
