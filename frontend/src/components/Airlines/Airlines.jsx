@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./Airlines.css";
 
 // Toast notification component
 const Toast = ({ message, type, onClose }) => {
@@ -13,13 +12,10 @@ const Toast = ({ message, type, onClose }) => {
   }, [onClose]);
 
   return (
-    <div className={`toast toast-${type}`}>
-      <div className="toast-message">
-        {type === "success" ? "✓" : "⚠️"} {message}
-      </div>
-      <button className="toast-close" onClick={onClose}>
-        ×
-      </button>
+    <div className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg border ${type === "success" ? "bg-[rgba(0,240,255,0.1)] border-[#00f0ff]/30 text-[#00f0ff]" : "bg-[rgba(255,80,80,0.1)] border-[#ff5050]/30 text-[#ff5050]"} font-['Rajdhani'] tracking-wider flex items-center shadow-lg backdrop-blur-sm`}>
+      <div className="mr-4 font-bold">{type === "success" ? "✓" : "⚠️"}</div>
+      <div>{message}</div>
+      <button className="ml-4 text-lg font-bold" onClick={onClose}>×</button>
     </div>
   );
 };
@@ -57,87 +53,105 @@ const AirlineForm = ({ airline, onSubmit, onCancel }) => {
   };
 
   return (
-    <div className="airline-form-modal">
-      <div className="airline-form-container">
-        <h2>{airline ? "Edit Airline" : "Create New Airline"}</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Airline Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
+    <div className="fixed inset-0 z-40 bg-[rgba(10,10,26,0.8)] backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-[rgba(16,24,39,0.9)] border border-[#00f0ff]/20 rounded-xl shadow-2xl shadow-[#00f0ff]/10 w-full max-w-2xl p-8">
+        <h2 className="font-['Orbitron'] text-2xl text-[#00f0ff] mb-6 tracking-wider uppercase">
+          {airline ? "EDIT AIRLINE" : "CREATE NEW AIRLINE"}
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">AIRLINE NAME</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">IMAGE URL</label>
+              <input
+                type="url"
+                name="image_url"
+                value={formData.image_url}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">COUNTRY</label>
+              <input
+                type="text"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">SLUG (URL IDENTIFIER)</label>
+              <input
+                type="text"
+                name="slug"
+                value={formData.slug}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">DESCRIPTION</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider min-h-[100px]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">HEADQUARTERS</label>
+              <input
+                type="text"
+                name="headquarters"
+                value={formData.headquarters}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">ESTABLISHED (YEAR)</label>
+              <input
+                type="number"
+                name="established_year"
+                value={formData.established_year}
+                onChange={handleChange}
+                min="1900"
+                max={new Date().getFullYear()}
+                required
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
+              />
+            </div>
           </div>
-          <div className="form-group">
-            <label>Image URL</label>
-            <input
-              type="url"
-              name="image_url"
-              value={formData.image_url}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Country</label>
-            <input
-              type="text"
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Slug (URL Identifier)</label>
-            <input
-              type="text"
-              name="slug"
-              value={formData.slug}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Headquarters</label>
-            <input
-              type="text"
-              name="headquarters"
-              value={formData.headquarters}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Established (Year)</label>
-            <input
-              type="number"
-              name="established_year"
-              value={formData.established_year}
-              onChange={handleChange}
-              min="1900"
-              max={new Date().getFullYear()}
-              required
-            />
-          </div>
-          <div className="form-actions">
-            <button type="button" className="btn-cancel" onClick={onCancel}>
-              Cancel
+          <div className="flex justify-end space-x-4 pt-4">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-6 py-3 bg-transparent border border-[#00f0ff]/50 text-[#00f0ff] rounded-lg font-['Orbitron'] tracking-wider hover:bg-[rgba(0,240,255,0.1)] transition-colors"
+            >
+              CANCEL
             </button>
-            <button type="submit" className="btn-submit">
-              {airline ? "Update" : "Create"}
+            <button
+              type="submit"
+              className="px-6 py-3 bg-[#00f0ff] text-[#0a0a1a] rounded-lg font-['Orbitron'] font-bold tracking-wider hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all"
+            >
+              {airline ? "UPDATE" : "CREATE"}
             </button>
           </div>
         </form>
@@ -183,13 +197,15 @@ const BookingForm = ({ airline, onSubmit, onCancel, isBooking }) => {
   };
 
   return (
-    <div className="booking-form-modal">
-      <div className="booking-form-container">
-        <h2>Book Flight - {airline.attributes.name}</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Departure Date</label>
+    <div className="fixed inset-0 z-40 bg-[rgba(10,10,26,0.8)] backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-[rgba(16,24,39,0.9)] border border-[#00f0ff]/20 rounded-xl shadow-2xl shadow-[#00f0ff]/10 w-full max-w-2xl p-8">
+        <h2 className="font-['Orbitron'] text-2xl text-[#00f0ff] mb-6 tracking-wider uppercase">
+          BOOK FLIGHT - {airline.attributes.name.toUpperCase()}
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">DEPARTURE DATE</label>
               <input
                 type="date"
                 name="departure_date"
@@ -197,51 +213,49 @@ const BookingForm = ({ airline, onSubmit, onCancel, isBooking }) => {
                 onChange={handleChange}
                 required
                 min={new Date().toISOString().split("T")[0]}
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
               />
             </div>
-            <div className="form-group">
-              <label>Departure Time</label>
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">DEPARTURE TIME</label>
               <input
                 type="time"
                 name="departure_time"
                 value={formData.departure_time}
                 onChange={handleChange}
                 required
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
               />
             </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Return Date (Optional)</label>
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">RETURN DATE (OPTIONAL)</label>
               <input
                 type="date"
                 name="return_date"
                 value={formData.return_date}
                 onChange={handleChange}
                 min={formData.departure_date || new Date().toISOString().split("T")[0]}
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
               />
             </div>
-            <div className="form-group">
-              <label>Passengers</label>
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">PASSENGERS</label>
               <select
                 name="passengers"
                 value={formData.passengers}
                 onChange={handleChange}
                 required
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                  <option key={num} value={num}>
-                    {num} {num === 1 ? "Passenger" : "Passengers"}
+                  <option key={num} value={num} className="bg-[#0a0a1a]">
+                    {num} {num === 1 ? "PASSENGER" : "PASSENGERS"}
                   </option>
                 ))}
               </select>
             </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Origin City</label>
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">ORIGIN CITY</label>
               <input
                 type="text"
                 name="origin"
@@ -249,10 +263,11 @@ const BookingForm = ({ airline, onSubmit, onCancel, isBooking }) => {
                 onChange={handleChange}
                 required
                 placeholder="City of departure"
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
               />
             </div>
-            <div className="form-group">
-              <label>Destination</label>
+            <div>
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">DESTINATION</label>
               <input
                 type="text"
                 name="destination"
@@ -260,53 +275,51 @@ const BookingForm = ({ airline, onSubmit, onCancel, isBooking }) => {
                 onChange={handleChange}
                 required
                 readOnly
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
               />
             </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Cabin Class</label>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">CABIN CLASS</label>
               <select
                 name="cabin_class"
                 value={formData.cabin_class}
                 onChange={handleChange}
                 required
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider"
               >
                 {cabinClasses.map((cls) => (
-                  <option key={cls.value} value={cls.value}>
-                    {cls.label}
+                  <option key={cls.value} value={cls.value} className="bg-[#0a0a1a]">
+                    {cls.label.toUpperCase()}
                   </option>
                 ))}
               </select>
             </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">SPECIAL REQUESTS (OPTIONAL)</label>
+              <textarea
+                name="special_requests"
+                value={formData.special_requests}
+                onChange={handleChange}
+                placeholder="Dietary needs, accessibility requirements, etc."
+                className="w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider min-h-[100px]"
+              />
+            </div>
           </div>
-
-          <div className="form-group">
-            <label>Special Requests (Optional)</label>
-            <textarea
-              name="special_requests"
-              value={formData.special_requests}
-              onChange={handleChange}
-              placeholder="Dietary needs, accessibility requirements, etc."
-            />
-          </div>
-
-          <div className="form-actions">
-            <button 
-              type="button" 
-              className="btn-cancel" 
+          <div className="flex justify-end space-x-4 pt-4">
+            <button
+              type="button"
               onClick={onCancel}
               disabled={isBooking}
+              className={`px-6 py-3 bg-transparent border ${isBooking ? 'border-[#00f0ff]/20 text-[#00f0ff]/50' : 'border-[#00f0ff]/50 text-[#00f0ff]'} rounded-lg font-['Orbitron'] tracking-wider hover:bg-[rgba(0,240,255,0.1)] transition-colors`}
             >
-              Cancel
+              CANCEL
             </button>
-            <button 
-              type="submit" 
-              className="btn-submit"
+            <button
+              type="submit"
               disabled={isBooking}
+              className={`px-6 py-3 ${isBooking ? 'bg-[#00f0ff]/50' : 'bg-[#00f0ff] hover:shadow-[0_0_20px_rgba(0,240,255,0.5)]'} text-[#0a0a1a] rounded-lg font-['Orbitron'] font-bold tracking-wider transition-all`}
             >
-              {isBooking ? "Processing..." : "Confirm Booking"}
+              {isBooking ? "PROCESSING..." : "CONFIRM BOOKING"}
             </button>
           </div>
         </form>
@@ -327,6 +340,19 @@ const Airlines = () => {
   const [toasts, setToasts] = useState([]);
   const [isBooking, setIsBooking] = useState(false);
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear user data from localStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    
+    // Redirect to login page
+    navigate("/login");
+    
+    // Show success message
+    addToast("You have been logged out successfully", "success");
+  };
 
   useEffect(() => {
     const fetchAirlines = async () => {
@@ -474,30 +500,30 @@ const Airlines = () => {
 
   if (loading)
     return (
-      <div className="loading-screen">
-        <div className="loading-spinner"></div>
-        <div className="loading-text">Initializing Airline Database...</div>
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a1a] z-50">
+        <div className="w-16 h-16 border-4 border-[#00f0ff] border-t-transparent rounded-full animate-spin"></div>
+        <div className="mt-4 text-[#00f0ff] font-['Orbitron'] tracking-wider uppercase">INITIALIZING AIRLINE DATABASE...</div>
       </div>
     );
 
   if (error)
     return (
-      <div className="error-screen">
-        <div className="error-icon">⚠️</div>
-        <div className="error-message">{error}</div>
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a1a] z-50 p-4">
+        <div className="text-4xl text-[#ff5050] mb-4">⚠️</div>
+        <div className="text-[#f0f4ff] text-center font-['Rajdhani'] tracking-wider mb-6">{error}</div>
         <button
-          className="retry-button"
+          className="px-6 py-3 bg-[#00f0ff] text-[#0a0a1a] rounded-lg font-['Orbitron'] font-bold tracking-wider hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all"
           onClick={() => window.location.reload()}
         >
-          Retry Connection
+          RETRY CONNECTION
         </button>
       </div>
     );
 
   return (
-    <div className="airlines-container">
+    <div className="min-h-screen bg-[#0a0a1a] text-[#f0f4ff]">
       {/* Toast notifications */}
-      <div className="toast-container">
+      <div className="fixed top-4 right-4 z-50 space-y-2">
         {toasts.map((toast) => (
           <Toast
             key={toast.id}
@@ -530,141 +556,163 @@ const Airlines = () => {
         />
       )}
 
-      <header className="airlines-header">
-        <div className="header-content">
-          <h1 className="main-title">
-            <span className="gradient-text">Open Flights </span>Network
-          </h1>
-          <p className="sub-title">Connect with airlines worldwide</p>
+      {/* Logout button at the top right */}
+      <div className="absolute top-4 right-4 z-40">
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-transparent border border-[#ff5050]/50 text-[#ff5050] rounded-lg font-['Rajdhani'] tracking-wider hover:bg-[rgba(255,80,80,0.1)] transition-colors flex items-center"
+        >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+          </svg>
+          LOGOUT
+        </button>
+      </div>
 
-          <div className="search-container">
-            <input
-              type="text"
-              placeholder="Search airlines..."
-              className="search-input"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <div className="search-icon">🔍</div>
-          </div>
+      <header className="pt-12 pb-8 px-4 md:px-8 border-b border-[#00f0ff]/10">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <h1 className="font-['Orbitron'] text-4xl font-bold tracking-wider uppercase">
+                <span className="text-[#00f0ff]">SKY</span>METRICS
+              </h1>
+              <p className="font-['Rajdhani'] text-[#00f0ff]/80 tracking-wider mt-2">FLIGHT CONTROL SYSTEM</p>
+            </div>
 
-          <div className="search-actions">
-            {role === "user" && (
-              <Link to="/my-bookings" className="btn-view-bookings">
-                 My Bookings
-              </Link>
-            )}
-          </div>
+            <div className="relative flex-1 max-w-xl">
+              <input
+                type="text"
+                placeholder="SEARCH AIRLINES..."
+                className="w-full px-6 py-3 bg-[rgba(0,240,255,0.05)] border border-[#00f0ff]/30 rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider pl-12"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#00f0ff]">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+            </div>
 
-          <div className="header-actions">
-            {role === "admin" && (
-              <button
-                className="btn-create"
-                onClick={() => {
-                  setShowForm(true);
-                  setEditingAirline(null);
-                }}
-              >
-                Create New Airline
-              </button>
-            )}
+            <div className="flex items-center space-x-4">
+              {role === "user" && (
+                <Link 
+                  to="/my-bookings" 
+                  className="px-6 py-3 bg-transparent border border-[#00f0ff]/50 text-[#00f0ff] rounded-lg font-['Orbitron'] tracking-wider hover:bg-[rgba(0,240,255,0.1)] transition-colors"
+                >
+                  MY BOOKINGS
+                </Link>
+              )}
+              {role === "admin" && (
+                <button
+                  className="px-6 py-3 bg-[#00f0ff] text-[#0a0a1a] rounded-lg font-['Orbitron'] font-bold tracking-wider hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all"
+                  onClick={() => {
+                    setShowForm(true);
+                    setEditingAirline(null);
+                  }}
+                >
+                  CREATE NEW
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="airlines-grid">
-        {filteredAirlines.length > 0 ? (
-          filteredAirlines.map((airline) => (
-            <div key={airline.id} className="airline-card">
-              <Link
-                to={`/airlines/${airline.attributes.slug}`}
-                className="card-link"
-              >
-                <div className="card-image-container">
-                  <img
-                    src={airline.attributes.image_url}
-                    alt={airline.attributes.name}
-                    className="card-image"
-                  />
-                  <div className="card-overlay"></div>
-                  <div className="card-badge">
-                    {airline.attributes.avg_score.toFixed(1)}
-                  </div>
-                </div>
-                <div className="card-content">
-                  <h3 className="airline-name">{airline.attributes.name}</h3>
-                  <div className="airline-meta">
-                    <span className="meta-item">
-                      ✈️ {airline.attributes.country}
-                    </span>
-                    <span className="meta-item">
-                      ⭐ {airline.attributes.reviews_count} reviews
-                    </span>
-                  </div>
-                </div>
-              </Link>
-
-              <div className="card-actions">
-                <Link
-                  to={`/airlines/${airline.attributes.slug}`}
-                  className="btn-show"
-                >
-                  Show
-                </Link>
-
-                {role === "admin" ? (
-                  <>
-                    <button
-                      className="btn-edit"
-                      onClick={() => {
-                        setEditingAirline(airline);
-                        setShowForm(true);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn-delete"
-                      onClick={() =>
-                        handleDelete(
-                          airline.attributes.slug,
-                          airline.attributes.name
-                        )
-                      }
-                    >
-                      Delete
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    className="btn-book"
-                    onClick={() => setBookingAirline(airline)}
+      <main className="py-8 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto">
+          {filteredAirlines.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredAirlines.map((airline) => (
+                <div key={airline.id} className="bg-[rgba(16,24,39,0.5)] border border-[#00f0ff]/10 rounded-xl overflow-hidden hover:border-[#00f0ff]/30 transition-all hover:shadow-[0_0_20px_rgba(0,240,255,0.1)]">
+                  <Link
+                    to={`/airlines/${airline.attributes.slug}`}
+                    className="block"
                   >
-                    Book Flight
-                  </button>
-                )}
-              </div>
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={airline.attributes.image_url}
+                        alt={airline.attributes.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,10,26,0.8)] to-transparent"></div>
+                      <div className="absolute top-4 right-4 bg-[rgba(0,240,255,0.2)] backdrop-blur-sm px-3 py-1 rounded-full border border-[#00f0ff]/30 text-[#00f0ff] font-['Orbitron'] text-sm font-bold tracking-wider">
+                        {airline.attributes.avg_score.toFixed(1)} ★
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="font-['Orbitron'] text-xl font-bold tracking-wider mb-2">{airline.attributes.name}</h3>
+                      <div className="flex flex-wrap gap-2 text-sm font-['Rajdhani'] tracking-wider text-[#00f0ff]">
+                        <span>✈️ {airline.attributes.country}</span>
+                        <span>⭐ {airline.attributes.reviews_count} REVIEWS</span>
+                      </div>
+                    </div>
+                  </Link>
+
+                  <div className="px-6 pb-6 flex flex-wrap gap-2">
+                    <Link
+                      to={`/airlines/${airline.attributes.slug}`}
+                      className="px-4 py-2 bg-transparent border border-[#00f0ff]/50 text-[#00f0ff] rounded-lg font-['Rajdhani'] tracking-wider hover:bg-[rgba(0,240,255,0.1)] transition-colors"
+                    >
+                      DETAILS
+                    </Link>
+
+                    {role === "admin" ? (
+                      <>
+                        <button
+                          className="px-4 py-2 bg-transparent border border-[#00f0ff]/50 text-[#00f0ff] rounded-lg font-['Rajdhani'] tracking-wider hover:bg-[rgba(0,240,255,0.1)] transition-colors"
+                          onClick={() => {
+                            setEditingAirline(airline);
+                            setShowForm(true);
+                          }}
+                        >
+                          EDIT
+                        </button>
+                        <button
+                          className="px-4 py-2 bg-transparent border border-[#ff5050]/50 text-[#ff5050] rounded-lg font-['Rajdhani'] tracking-wider hover:bg-[rgba(255,80,80,0.1)] transition-colors"
+                          onClick={() =>
+                            handleDelete(
+                              airline.attributes.slug,
+                              airline.attributes.name
+                            )
+                          }
+                        >
+                          DELETE
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className="px-4 py-2 bg-[#00f0ff] text-[#0a0a1a] rounded-lg font-['Rajdhani'] font-bold tracking-wider hover:shadow-[0_0_10px_rgba(0,240,255,0.5)] transition-all"
+                        onClick={() => setBookingAirline(airline)}
+                      >
+                        BOOK FLIGHT
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))
-        ) : (
-          <div className="no-results">
-            <div className="no-results-icon">🌐</div>
-            <h3>No airlines found</h3>
-            <p>Try adjusting your search criteria</p>
-          </div>
-        )}
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="text-6xl text-[#00f0ff]/50 mb-4">🌐</div>
+              <h3 className="font-['Orbitron'] text-2xl tracking-wider mb-2">NO AIRLINES FOUND</h3>
+              <p className="font-['Rajdhani'] text-[#00f0ff]/80 tracking-wider">TRY ADJUSTING YOUR SEARCH CRITERIA</p>
+            </div>
+          )}
+        </div>
       </main>
 
-      <footer className="airlines-footer">
-        <div className="footer-content">
-          <p>
-            Showing {filteredAirlines.length} of {airlines.length} airlines
+      <footer className="py-6 px-4 md:px-8 border-t border-[#00f0ff]/10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+          <p className="font-['Rajdhani'] text-sm text-[#00f0ff]/50 tracking-wider mb-4 md:mb-0">
+            DISPLAYING {filteredAirlines.length} OF {airlines.length} AIRLINES
           </p>
-          <div className="footer-links">
-            <Link to="/" className="home-link">
-              Return to Orbit
-            </Link>
-          </div>
+          <Link 
+            to="/" 
+            className="font-['Rajdhani'] text-sm text-[#00f0ff] tracking-wider hover:text-[#00f0ff]/80 transition-colors"
+          >
+            RETURN TO CONTROL PANEL
+          </Link>
         </div>
       </footer>
     </div>

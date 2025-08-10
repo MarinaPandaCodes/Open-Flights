@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import ReviewForm from './ReviewForm';
-import './Airline.css';
 
 const Airline = () => {
   const { slug } = useParams();
@@ -117,154 +116,153 @@ const Airline = () => {
   };
 
   if (loading) return (
-    <div className="loading-screen">
-      <div className="holographic-spinner" aria-label="Loading" />
-      <p className="loading-text">Initializing neural scan...</p>
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a1a] z-50">
+      <div className="w-16 h-16 border-4 border-[#00f0ff] border-t-transparent rounded-full animate-spin"></div>
+      <div className="mt-4 text-[#00f0ff] font-['Orbitron'] tracking-wider uppercase">INITIALIZING NEURAL SCAN...</div>
     </div>
   );
 
   if (error) return (
-    <div className="error-screen">
-      <div className="error-icon">⚠️</div>
-      <h2>Connection Error</h2>
-      <p>Failed to retrieve airline data: {error.message}</p>
-      <button className="retry-button" onClick={fetchAirline}>
-        Retry Connection
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a1a] z-50 p-4 text-center">
+      <div className="text-4xl text-[#ff5050] mb-4">⚠️</div>
+      <h2 className="font-['Orbitron'] text-xl text-[#f0f4ff] mb-2 tracking-wider">CONNECTION ERROR</h2>
+      <p className="font-['Rajdhani'] text-[#f0f4ff]/80 tracking-wider mb-6">FAILED TO RETRIEVE AIRLINE DATA: {error.message}</p>
+      <button 
+        className="px-6 py-3 bg-[#00f0ff] text-[#0a0a1a] rounded-lg font-['Orbitron'] font-bold tracking-wider hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all"
+        onClick={fetchAirline}
+      >
+        RETRY CONNECTION
       </button>
     </div>
   );
 
   if (!airline) return (
-    <div className="error-screen">
-      <div className="error-icon">❌</div>
-      <h2>No Airline Found</h2>
-      <p>The requested neural pattern doesn't exist in our database</p>
-      <Link to="/" className="retry-button">Return to Dashboard</Link>
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a1a] z-50 p-4 text-center">
+      <div className="text-4xl text-[#ff5050] mb-4">❌</div>
+      <h2 className="font-['Orbitron'] text-xl text-[#f0f4ff] mb-2 tracking-wider">NO AIRLINE FOUND</h2>
+      <p className="font-['Rajdhani'] text-[#f0f4ff]/80 tracking-wider mb-6">THE REQUESTED NEURAL PATTERN DOESN'T EXIST IN OUR DATABASE</p>
+      <Link 
+        to="/" 
+        className="px-6 py-3 bg-[#00f0ff] text-[#0a0a1a] rounded-lg font-['Orbitron'] font-bold tracking-wider hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all"
+      >
+        RETURN TO DASHBOARD
+      </Link>
     </div>
   );
 
   return (
-    <div className="airline-container">
+    <div className="min-h-screen bg-[#0a0a1a] text-[#f0f4ff]">
       {/* Header Section */}
-      <div className="airline-header">
+      <div className="relative">
         <div 
-          className="header-background" 
-          style={{ backgroundImage: `url(${airline.attributes.image_url})` }} 
+          className="absolute inset-0 bg-cover bg-center opacity-20" 
+          style={{ backgroundImage: `url(${airline.attributes.image_url})` }}
           aria-hidden="true"
         />
-        <div className="header-content">
-          <div className="airline-badge">
-            {airline.attributes.name.substring(0, 2).toUpperCase()}
-          </div>
-          <h1 className="airline-title gradient-text">{airline.attributes.name}</h1>
-          <div className="airline-meta">
-            <div className="meta-item">
-              <span>⭐</span>
-              <span>{airline.attributes.avg_score?.toFixed(1) || 'N/A'}</span>
+        <div className="relative z-10 pt-16 pb-12 px-4 md:px-8">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8">
+            <div className="w-24 h-24 rounded-full bg-[rgba(0,240,255,0.1)] border-2 border-[#00f0ff] flex items-center justify-center text-3xl font-['Orbitron'] font-bold text-[#00f0ff] tracking-wider">
+              {airline.attributes.name.substring(0, 2).toUpperCase()}
             </div>
-            <div className="meta-item">
-              <span>🧠</span>
-              <span>{airline.attributes.reviews_count} Reviews</span>
+            <div>
+              <h1 className="font-['Orbitron'] text-4xl font-bold tracking-wider uppercase">
+                <span className="text-[#00f0ff]">{airline.attributes.name}</span>
+              </h1>
+              <div className="flex gap-6 mt-4">
+                <div className="flex items-center gap-2 font-['Rajdhani'] tracking-wider">
+                  <span className="text-[#00f0ff]">⭐</span>
+                  <span>{airline.attributes.avg_score?.toFixed(1) || 'N/A'}</span>
+                </div>
+                <div className="flex items-center gap-2 font-['Rajdhani'] tracking-wider">
+                  <span className="text-[#00f0ff]">🧠</span>
+                  <span>{airline.attributes.reviews_count} REVIEWS</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="airline-tabs" role="tablist">
-        <button
-          className={`tab-button ${activeTab === 'overview' ? 'active' : ''}`}
-          onClick={() => setActiveTab('overview')}
-          role="tab"
-          aria-selected={activeTab === 'overview'}
-          aria-controls="overview-tab"
-        >
-          📡 Overview
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'reviews' ? 'active' : ''}`}
-          onClick={() => setActiveTab('reviews')}
-          role="tab"
-          aria-selected={activeTab === 'reviews'}
-          aria-controls="reviews-tab"
-        >
-          🧠 Reviews
-        </button>
+      <div className="border-b border-[#00f0ff]/10">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 flex">
+          <button
+            className={`px-6 py-4 font-['Orbitron'] tracking-wider ${activeTab === 'overview' ? 'text-[#00f0ff] border-b-2 border-[#00f0ff]' : 'text-[#f0f4ff]/50 hover:text-[#f0f4ff]'}`}
+            onClick={() => setActiveTab('overview')}
+          >
+            📡 OVERVIEW
+          </button>
+          <button
+            className={`px-6 py-4 font-['Orbitron'] tracking-wider ${activeTab === 'reviews' ? 'text-[#00f0ff] border-b-2 border-[#00f0ff]' : 'text-[#f0f4ff]/50 hover:text-[#f0f4ff]'}`}
+            onClick={() => setActiveTab('reviews')}
+          >
+            🧠 REVIEWS
+          </button>
+        </div>
       </div>
 
       {/* Tab Content */}
-      <div className="airline-content">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
         {activeTab === 'overview' && (
-          <div 
-            id="overview-tab" 
-            className="overview-tab tab-content" 
-            role="tabpanel"
-            aria-labelledby="overview-tab"
-          >
-            <div className="airline-image-container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="relative rounded-xl overflow-hidden border border-[#00f0ff]/20">
               <img 
                 src={airline.attributes.image_url} 
                 alt={airline.attributes.name} 
-                className="airline-image"
+                className="w-full h-full object-cover"
                 loading="lazy"
               />
-              <div className="image-overlay" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,10,26,0.8)] via-transparent to-transparent"></div>
             </div>
 
-            <div className="airline-profile">
-              <h2 className="profile-title">✈️ Flight Profile</h2>
-              <p><strong>Description:</strong> {airline.attributes.description}</p>
-              <p><strong>Country:</strong> {airline.attributes.country}</p>
-              <p><strong>Headquarters:</strong> {airline.attributes.headquarters}</p>
-              <p><strong>Established:</strong> {airline.attributes.established_year}</p>
+            <div className="space-y-6">
+              <h2 className="font-['Orbitron'] text-2xl text-[#00f0ff] tracking-wider uppercase">✈️ FLIGHT PROFILE</h2>
+              <div className="space-y-4 font-['Rajdhani'] tracking-wider">
+                <p><span className="text-[#00f0ff] font-medium">DESCRIPTION:</span> {airline.attributes.description}</p>
+                <p><span className="text-[#00f0ff] font-medium">COUNTRY:</span> {airline.attributes.country}</p>
+                <p><span className="text-[#00f0ff] font-medium">HEADQUARTERS:</span> {airline.attributes.headquarters}</p>
+                <p><span className="text-[#00f0ff] font-medium">ESTABLISHED:</span> {airline.attributes.established_year}</p>
+              </div>
             </div>
-
-            <div className="holographic-bar" />
           </div>
         )}
 
         {activeTab === 'reviews' && (
-          <div 
-            id="reviews-tab" 
-            className="reviews-tab tab-content" 
-            role="tabpanel"
-            aria-labelledby="reviews-tab"
-          >
-            <h3 className="reviews-title">Open Flights Feedback Network</h3>
+          <div>
+            <h3 className="font-['Orbitron'] text-2xl text-[#00f0ff] tracking-wider uppercase mb-8">OPEN FLIGHTS FEEDBACK NETWORK</h3>
             {reviews.length > 0 ? (
-              <div className="reviews-list">
+              <div className="space-y-6">
                 {reviews.map(review => (
-                  <div key={review.id} className="review-card">
-                    <div className="review-header">
-                      <h4>{review.attributes.title}</h4>
-                      <div className="review-actions">
+                  <div key={review.id} className="bg-[rgba(16,24,39,0.5)] border border-[#00f0ff]/10 rounded-xl p-6 hover:border-[#00f0ff]/30 transition-all">
+                    <div className="flex justify-between items-start mb-4">
+                      <h4 className="font-['Orbitron'] text-xl tracking-wider">{review.attributes.title}</h4>
+                      <div className="flex gap-2">
                         <button 
                           onClick={() => handleEditReview(review)}
-                          className="action-button edit-button"
-                          aria-label="Edit review"
+                          className="px-3 py-1 bg-transparent border border-[#00f0ff]/50 text-[#00f0ff] rounded-lg font-['Rajdhani'] tracking-wider text-sm hover:bg-[rgba(0,240,255,0.1)] transition-colors"
                         >
-                          ✏️ Edit
+                          ✏️ EDIT
                         </button>
                         <button 
                           onClick={() => handleDeleteReview(review.id)}
-                          className="action-button delete-button"
-                          aria-label="Delete review"
+                          className="px-3 py-1 bg-transparent border border-[#ff5050]/50 text-[#ff5050] rounded-lg font-['Rajdhani'] tracking-wider text-sm hover:bg-[rgba(255,80,80,0.1)] transition-colors"
                         >
-                          🗑️ Delete
+                          🗑️ DELETE
                         </button>
                       </div>
                     </div>
-                    <div className="review-meta">
-                      <span className="review-score">⭐ {review.attributes.score}</span>
+                    <div className="flex items-center gap-2 mb-4 font-['Rajdhani'] tracking-wider">
+                      <span className="text-[#00f0ff]">⭐</span>
+                      <span>{review.attributes.score}</span>
                     </div>
-                    <p className="review-description">{review.attributes.description}</p>
+                    <p className="font-['Rajdhani'] tracking-wider text-[#f0f4ff]/80">{review.attributes.description}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="no-reviews">
-                <p>No neural patterns detected</p>
-                <div className="holographic-grid" aria-hidden="true" />
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="text-6xl text-[#00f0ff]/50 mb-4">🧠</div>
+                <p className="font-['Rajdhani'] tracking-wider text-[#f0f4ff]/80">NO NEURAL PATTERNS DETECTED</p>
               </div>
             )}
             <button
@@ -272,10 +270,9 @@ const Airline = () => {
                 setEditingReview(null);
                 setShowReviewForm(true);
               }}
-              className="add-review-button pulse"
-              aria-label="Add new review"
+              className="mt-8 px-6 py-3 bg-[#00f0ff] text-[#0a0a1a] rounded-lg font-['Orbitron'] font-bold tracking-wider hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all animate-pulse"
             >
-              Upload Experience ↑
+              UPLOAD EXPERIENCE ↑
             </button>
           </div>
         )}
@@ -283,15 +280,14 @@ const Airline = () => {
 
       {/* Review Modal */}
       {showReviewForm && (
-        <div className="modal-overlay" role="dialog" aria-modal="true">
-          <div className="modal-content">
+        <div className="fixed inset-0 z-40 bg-[rgba(10,10,26,0.8)] backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[rgba(16,24,39,0.9)] border border-[#00f0ff]/20 rounded-xl shadow-2xl shadow-[#00f0ff]/10 w-full max-w-2xl p-8 relative">
             <button 
-              className="close-button" 
+              className="absolute top-4 right-4 text-[#00f0ff] text-2xl hover:text-[#00f0ff]/80 transition-colors"
               onClick={() => {
                 setShowReviewForm(false);
                 setEditingReview(null);
               }}
-              aria-label="Close review form"
             >
               ×
             </button>
@@ -309,10 +305,15 @@ const Airline = () => {
       )}
 
       {/* Footer */}
-      <div className="airline-footer">
-        <Link to="/airlines" className="back-link">
-          ← Return to Airlines
-        </Link>
+      <div className="border-t border-[#00f0ff]/10 py-6 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto">
+          <Link 
+            to="/airlines" 
+            className="font-['Rajdhani'] text-[#00f0ff] tracking-wider hover:text-[#00f0ff]/80 transition-colors"
+          >
+            ← RETURN TO AIRLINES
+          </Link>
+        </div>
       </div>
     </div>
   );

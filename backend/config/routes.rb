@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       resources :bookings, only: [:create, :index]
      post "login", to: "auth#login"
      post "signup", to:"auth#signup"
+     
     end
   end
   get '*path', to: 'pages#index', via: :all

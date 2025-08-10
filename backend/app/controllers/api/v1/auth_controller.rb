@@ -62,6 +62,16 @@ module Api
         end
       end
 
+      # 🚪 POST /api/v1/logout
+      def logout
+        # With JWT, logout is handled client-side by discarding the token
+        # This endpoint provides a formal way to handle logout if needed
+        render json: {
+          status: 'success',
+          message: 'Logged out successfully'
+        }, status: :ok
+      end
+
       private
 
       def user_params
