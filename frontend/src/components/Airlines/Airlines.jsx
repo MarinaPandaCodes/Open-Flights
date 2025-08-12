@@ -1,8 +1,9 @@
+import { createBooking } from "../../services/bookingService";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-// Toast notification component
+// Toast notification component (unchanged)
 const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -19,6 +20,7 @@ const Toast = ({ message, type, onClose }) => {
     </div>
   );
 };
+
 
 // Airline create/edit form
 const AirlineForm = ({ airline, onSubmit, onCancel }) => {
@@ -342,15 +344,10 @@ const Airlines = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Clear user data from localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("email");
-    
-    // Redirect to login page
     navigate("/login");
-    
-    // Show success message
     addToast("You have been logged out successfully", "success");
   };
 
@@ -379,12 +376,13 @@ const Airlines = () => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   };
 
-  const handleDelete = async (slug, name) => {
+  // Updated to use airline ID instead of slug
+  const handleDelete = async (id, name) => {
     if (window.confirm(`Are you sure you want to delete ${name}?`)) {
       try {
-        await axios.delete(`/api/v1/airlines/${slug}`);
+        await axios.delete(`/api/v1/airlines/${id}`);
         setAirlines((prev) =>
-          prev.filter((a) => a.attributes.slug !== slug)
+          prev.filter((a) => a.id !== id)
         );
         addToast(`${name} has been deleted successfully.`, "success");
       } catch (err) {
@@ -411,10 +409,11 @@ const Airlines = () => {
     }
   };
 
+  // Updated to use airline ID instead of slug
   const handleUpdate = async (formData) => {
     try {
       const response = await axios.put(
-        `/api/v1/airlines/${editingAirline.attributes.slug}`,
+        `/api/v1/airlines/${editingAirline.id}`,
         {
           airline: formData
         }
@@ -440,6 +439,7 @@ const Airlines = () => {
     }
   };
 
+  // Updated to use airline ID through bookingAirline.id
   const handleBookingSubmit = async (bookingData) => {
     if (isBooking) return;
     setIsBooking(true);
@@ -447,35 +447,17 @@ const Airlines = () => {
     try {
       if (!bookingData.departure_date || !bookingData.departure_time || !bookingData.origin) {
         addToast("Please fill all required fields", "error");
+        setIsBooking(false);
         return;
       }
 
-      const response = await axios.post("/api/v1/bookings", {
-        booking: {
-          airline_id: bookingAirline.id,
-          departure_date: bookingData.departure_date,
-          return_date: bookingData.return_date || null,
-          departure_time: bookingData.departure_time,
-          passengers: parseInt(bookingData.passengers, 10),
-          cabin_class: bookingData.cabin_class,
-          origin: bookingData.origin.trim(),
-          destination: bookingData.destination.trim(),
-          special_requests: bookingData.special_requests?.trim() || null
-        }
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (response.status === 201) {
-        addToast(
-          `Flight from ${bookingData.origin} to ${bookingData.destination} booked successfully!`,
-          "success"
-        );
-        setBookingAirline(null);
-      }
+      await createBooking(bookingAirline.id, bookingData);
+      
+      addToast(
+        `Flight from ${bookingData.origin} to ${bookingData.destination} booked successfully!`,
+        "success"
+      );
+      setBookingAirline(null);
     } catch (err) {
       console.error("Booking error details:", {
         error: err,
@@ -522,7 +504,7 @@ const Airlines = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-[#f0f4ff]">
-      {/* Toast notifications */}
+      {/* Toast notifications (unchanged) */}
       <div className="fixed top-4 right-4 z-50 space-y-2">
         {toasts.map((toast) => (
           <Toast
@@ -534,7 +516,7 @@ const Airlines = () => {
         ))}
       </div>
 
-      {/* Airline Create/Edit Form Modal */}
+      {/* Airline Create/Edit Form Modal (unchanged) */}
       {(showForm || editingAirline) && (
         <AirlineForm
           airline={editingAirline}
@@ -546,7 +528,7 @@ const Airlines = () => {
         />
       )}
 
-      {/* Booking Form Modal for users */}
+      {/* Booking Form Modal for users (unchanged) */}
       {bookingAirline && (
         <BookingForm
           airline={bookingAirline}
@@ -556,7 +538,7 @@ const Airlines = () => {
         />
       )}
 
-      {/* Logout button at the top right */}
+      {/* Logout button at the top right (unchanged) */}
       <div className="absolute top-4 right-4 z-40">
         <button
           onClick={handleLogout}
@@ -574,7 +556,7 @@ const Airlines = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
               <h1 className="font-['Orbitron'] text-4xl font-bold tracking-wider uppercase">
-                <span className="text-[#00f0ff]">SKY</span>METRICS
+                <span className="text-[#00f0ff]">OPEN</span>FLIGHTS
               </h1>
               <p className="font-['Rajdhani'] text-[#00f0ff]/80 tracking-wider mt-2">FLIGHT CONTROL SYSTEM</p>
             </div>
@@ -625,8 +607,9 @@ const Airlines = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAirlines.map((airline) => (
                 <div key={airline.id} className="bg-[rgba(16,24,39,0.5)] border border-[#00f0ff]/10 rounded-xl overflow-hidden hover:border-[#00f0ff]/30 transition-all hover:shadow-[0_0_20px_rgba(0,240,255,0.1)]">
+                  {/* Updated to use airline ID in the link */}
                   <Link
-                    to={`/airlines/${airline.attributes.slug}`}
+                    to={`/airlines/${airline.id}`}
                     className="block"
                   >
                     <div className="relative h-48 overflow-hidden">
@@ -650,8 +633,9 @@ const Airlines = () => {
                   </Link>
 
                   <div className="px-6 pb-6 flex flex-wrap gap-2">
+                    {/* Updated to use airline ID in the link */}
                     <Link
-                      to={`/airlines/${airline.attributes.slug}`}
+                      to={`/airlines/${airline.id}`}
                       className="px-4 py-2 bg-transparent border border-[#00f0ff]/50 text-[#00f0ff] rounded-lg font-['Rajdhani'] tracking-wider hover:bg-[rgba(0,240,255,0.1)] transition-colors"
                     >
                       DETAILS
@@ -672,7 +656,7 @@ const Airlines = () => {
                           className="px-4 py-2 bg-transparent border border-[#ff5050]/50 text-[#ff5050] rounded-lg font-['Rajdhani'] tracking-wider hover:bg-[rgba(255,80,80,0.1)] transition-colors"
                           onClick={() =>
                             handleDelete(
-                              airline.attributes.slug,
+                              airline.id,
                               airline.attributes.name
                             )
                           }

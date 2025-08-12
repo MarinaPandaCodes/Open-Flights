@@ -1,5 +1,6 @@
 class Review < ApplicationRecord
   belongs_to :airline
+   belongs_to :user
   
   # Change any 'name' validations to 'title'
   validates :title, presence: true

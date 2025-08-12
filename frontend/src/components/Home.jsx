@@ -41,7 +41,7 @@ const Home = () => {
             NEXT-GEN FLIGHT ANALYTICS
           </div>
           <h1 className="font-['Orbitron'] text-[3.5rem] md:text-[5rem] mb-6 leading-[1.1] font-bold tracking-[2px] uppercase">
-            <span className="text-[#00f0ff]">Sky</span>Metrics
+            <span className="text-[#00f0ff]">OPEN</span>FLIGHTS
             <span className="text-[#00f0ff]">AI</span>
           </h1>
           <p className="text-[1.2rem] md:text-[1.4rem] mb-12 font-light max-w-[700px] mx-auto text-[rgba(240,244,255,0.8)] leading-relaxed tracking-[0.5px]">
@@ -201,7 +201,7 @@ const Home = () => {
                 </div>
                 <div>
                   <blockquote className="text-[1.4rem] leading-relaxed mb-6 font-light italic tracking-[0.5px]">
-                    "SkyMetrics AI is like having a co-pilot that never sleeps. The predictive
+                    "OpenFlights AI is like having a co-pilot that never sleeps. The predictive
                     analytics helped us reduce operational costs by 18% in the first quarter alone.
                     It's transformed how we plan our routes and crew schedules."
                   </blockquote>
@@ -226,7 +226,7 @@ const Home = () => {
             <span className="text-[#00f0ff]">OFF</span>
           </h2>
           <p className="text-[1.2rem] mb-10 text-[rgba(240,244,255,0.8)] tracking-[0.5px]">
-            Join 450+ airlines and 12,000+ pilots using SkyMetrics to optimize their flight
+            Join 450+ airlines and 12,000+ pilots using OpenFlights to optimize their flight
             operations.
           </p>
           <Link
@@ -243,7 +243,7 @@ const Home = () => {
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="text-[1.8rem] font-['Orbitron'] font-bold tracking-[2px] uppercase">
-              <span className="text-[#00f0ff]">SKY</span>METRICS
+              <span className="text-[#00f0ff]">OPEN</span>FLIGHTS
             </div>
             <div className="flex flex-wrap justify-center gap-6 font-['Rajdhani'] tracking-[1px]">
               <Link
@@ -290,7 +290,7 @@ const Home = () => {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-[rgba(0,240,255,0.1)] text-center text-[rgba(240,244,255,0.5)] text-sm font-['Rajdhani'] tracking-[1px]">
-            © {new Date().getFullYear()} SKYMETRICS AI. ALL RIGHTS RESERVED.
+            © {new Date().getFullYear()} OPENFLIGHTS AI. ALL RIGHTS RESERVED.
           </div>
         </div>
       </footer>

@@ -13,18 +13,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/airlines" element={<Airlines />} />
-        <Route path="/airlines/:slug" element={<Airline />} />
+        <Route path="/airlines/:id" element={<Airline />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        {/* Protected route */}
-        <Route
-          path="/airlines"
-          element={
-            <ProtectedRoute>
-              <Airlines />
-            </ProtectedRoute>
-          }
-        />
+        {/* Protected routes */}
         <Route
           path="/my-bookings"
           element={
@@ -33,6 +25,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        
       </Routes>
     </Router>
   );

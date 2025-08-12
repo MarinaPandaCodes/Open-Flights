@@ -7,7 +7,6 @@ const ReviewForm = ({ airlineId, review, onReviewSubmitted, onCancel }) => {
     title: '',
     score: '',
     description: '',
-    airline_id: airlineId
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,26 +19,9 @@ const ReviewForm = ({ airlineId, review, onReviewSubmitted, onCancel }) => {
         title: review.attributes.title || '',
         score: review.attributes.score ? String(review.attributes.score) : '',
         description: review.attributes.description || '',
-        airline_id: airlineId
-      });
-    } else {
-      setFormData({
-        title: '',
-        score: '',
-        description: '',
-        airline_id: airlineId
       });
     }
-  }, [review, airlineId]);
-
-  useEffect(() => {
-    if (submitStatus?.success) {
-      const timer = setTimeout(() => {
-        setSubmitStatus(null);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [submitStatus]);
+  }, [review]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -75,31 +57,41 @@ const ReviewForm = ({ airlineId, review, onReviewSubmitted, onCancel }) => {
       let response;
 
       if (review) {
+        // Update existing review
         response = await axios.patch(
-          `http://localhost:3000/api/v1/reviews/${review.id}`,
+          `/api/v1/reviews/${review.id}`,
           { review: formData },
-          {
-            headers: { 'Content-Type': 'application/json' }
+          { 
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            } 
           }
         );
       } else {
+        // Create new review
         response = await axios.post(
-          `http://localhost:3000/api/v1/reviews`,
+          `/api/v1/airlines/${airlineId}/reviews`,
           { review: formData },
-          {
-            headers: { 'Content-Type': 'application/json' }
+          { 
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            } 
           }
         );
       }
 
-      setSubmitStatus({ success: true, message: review ? 'Review updated successfully!' : 'Review uploaded successfully!' });
+      setSubmitStatus({ 
+        success: true, 
+        message: review ? 'Review updated successfully!' : 'Review uploaded successfully!' 
+      });
 
       if (!review) {
         setFormData({
           title: '',
           score: '',
           description: '',
-          airline_id: airlineId
         });
       }
 
@@ -120,6 +112,8 @@ const ReviewForm = ({ airlineId, review, onReviewSubmitted, onCancel }) => {
         errorMessage = error.response.data?.message || error.response.statusText;
       } else if (error.request) {
         errorMessage = 'No response from server';
+      } else if (error.message) {
+        errorMessage = error.message;
       }
 
       setErrors(fieldErrors);
@@ -136,7 +130,7 @@ const ReviewForm = ({ airlineId, review, onReviewSubmitted, onCancel }) => {
     if (onCancel) {
       onCancel();
     } else {
-      navigate(`/airlines`);
+      navigate(-1); // Go back to previous page
     }
   };
 
@@ -183,34 +177,33 @@ const ReviewForm = ({ airlineId, review, onReviewSubmitted, onCancel }) => {
 
         <div>
           <label htmlFor="score" className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">
-          FLIGHT RATING
-        </label>
-        <div className="relative">
-          <select
-            id="score"
-            name="score"
-            className={`block w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border ${
-              errors.score ? 'border-[#ff5050]' : 'border-[#00f0ff]/30'
-            } rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider appearance-none`}
-            value={formData.score}
-            onChange={handleChange}
-            required
-          >
-            <option value="" className="bg-[#0a0a1a] text-[#f0f4ff]">Select rating</option>
-            <option value="1" className="bg-[#0a0a1a] text-[#f0f4ff]">1 - Poor</option>
-            <option value="2" className="bg-[#0a0a1a] text-[#f0f4ff]">2 - Fair</option>
-            <option value="3" className="bg-[#0a0a1a] text-[#f0f4ff]">3 - Good</option>
-            <option value="4" className="bg-[#0a0a1a] text-[#f0f4ff]">4 - Very Good</option>
-            <option value="5" className="bg-[#0a0a1a] text-[#f0f4ff]">5 - Excellent</option>
-          </select>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <svg className="h-5 w-5 text-[#00f0ff] opacity-80" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
+            FLIGHT RATING
+          </label>
+          <div className="relative">
+            <select
+              id="score"
+              name="score"
+              className={`block w-full px-4 py-3 bg-[rgba(0,240,255,0.05)] border ${errors.score ? 'border-[#ff5050]' : 'border-[#00f0ff]/30'} rounded-lg text-[#f0f4ff] placeholder-[#00f0ff]/50 focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/50 focus:border-[#00f0ff] transition-all font-['Rajdhani'] tracking-wider appearance-none`}
+              value={formData.score}
+              onChange={handleChange}
+              required
+            >
+              <option value="" className="bg-[#0a0a1a] text-[#f0f4ff]">Select rating</option>
+              <option value="1" className="bg-[#0a0a1a] text-[#f0f4ff]">1 - Poor</option>
+              <option value="2" className="bg-[#0a0a1a] text-[#f0f4ff]">2 - Fair</option>
+              <option value="3" className="bg-[#0a0a1a] text-[#f0f4ff]">3 - Good</option>
+              <option value="4" className="bg-[#0a0a1a] text-[#f0f4ff]">4 - Very Good</option>
+              <option value="5" className="bg-[#0a0a1a] text-[#f0f4ff]">5 - Excellent</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg className="h-5 w-5 text-[#00f0ff] opacity-80" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </div>
           </div>
+          {errors.score && <p className="mt-1 text-sm text-[#ff5050] font-['Rajdhani'] tracking-wider">{errors.score}</p>}
         </div>
-        {errors.score && <p className="mt-1 text-sm text-[#ff5050] font-['Rajdhani'] tracking-wider">{errors.score}</p>}
-      </div>
+
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-[#00f0ff] mb-2 font-['Rajdhani'] tracking-wider">
             FLIGHT REPORT

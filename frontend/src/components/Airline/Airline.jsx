@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import ReviewForm from './ReviewForm';
 
 const Airline = () => {
-  const { slug } = useParams();
+  const { id } = useParams(); // Changed from slug to id
   const [airline, setAirline] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +17,7 @@ const Airline = () => {
   const fetchAirline = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/v1/airlines/${slug}`);
+      const res = await axios.get(`/api/v1/airlines/${id}`); // Now using ID
       setAirline(res.data.data);
       setReviews(res.data.included?.filter(item => item.type === 'review') || []);
     } catch (err) {
@@ -26,7 +26,7 @@ const Airline = () => {
     } finally {
       setLoading(false);
     }
-  }, [slug]);
+  }, [id]); // Changed dependency from slug to id
 
   useEffect(() => {
     fetchAirline();

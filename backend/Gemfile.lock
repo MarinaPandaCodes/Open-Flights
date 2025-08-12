@@ -99,6 +99,8 @@ GEM
       activesupport (>= 4.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    groupdate (6.7.0)
+      activesupport (>= 7.1)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     io-console (0.8.1)
@@ -237,6 +239,7 @@ DEPENDENCIES
   bootsnap
   debug
   fast_jsonapi
+  groupdate
   jwt
   pg (~> 1.1)
   puma (>= 5.0)

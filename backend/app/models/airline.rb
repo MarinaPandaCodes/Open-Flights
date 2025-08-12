@@ -1,13 +1,18 @@
 class Airline < ApplicationRecord
   has_many :reviews
+  has_many :bookings
 
-  before_create :slugify
+  # Removed the before_create :slugify callback since we're not using slugs anymore
 
-  def slugify
-    self.slug = name.parameterize
+  # Safely calculate average score, even if there are no reviews or bad data
+  def avg_score
+    avg = reviews.average(:score)
+    avg ? avg.to_f.round(2) : 0.0
   end
 
-  def avg_score
-    (reviews.average(:score) || 0).round(2).to_f
+  # You might want to keep this method if you need to generate slugs for other purposes
+  # (like generating URLs for emails or frontend), but it's not needed for routing
+  def generate_slug
+    name.parameterize
   end
 end
