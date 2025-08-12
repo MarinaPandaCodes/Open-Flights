@@ -3,9 +3,11 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import ReviewForm from './ReviewForm';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell } from 'recharts';
 
 const Airline = () => {
-  const { id } = useParams(); // Changed from slug to id
+  const { id } = useParams();
   const [airline, setAirline] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,24 +15,69 @@ const Airline = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [editingReview, setEditingReview] = useState(null);
+  const [bookingStats, setBookingStats] = useState({
+    total_bookings: 0,
+    monthly_bookings: [],
+    cabin_distribution: []
+  });
 
+  // Fetch airline data
   const fetchAirline = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/v1/airlines/${id}`); // Now using ID
+      const res = await axios.get(`/api/v1/airlines/${id}`);
       setAirline(res.data.data);
       setReviews(res.data.included?.filter(item => item.type === 'review') || []);
+      
+      // Fetch booking analytics data
+      const statsRes = await axios.get(`/api/v1/airlines/${id}/booking_stats`);
+      setBookingStats({
+        total_bookings: statsRes.data.data.total_bookings,
+        monthly_bookings: Object.entries(statsRes.data.data.monthly_bookings).map(([date, count]) => ({
+          name: new Date(date).toLocaleString('default', { month: 'short' }),
+          bookings: count
+        })),
+        cabin_distribution: Object.entries(statsRes.data.data.cabin_distribution).map(([cabin, count]) => ({
+          name: cabin.split('_').map(w => w[0].toUpperCase() + w.slice(1)).join(' '),
+          value: count
+        }))
+      });
     } catch (err) {
-      console.error('Error fetching airline:', err);
+      console.error('Error fetching data:', err);
       setError(err);
     } finally {
       setLoading(false);
     }
-  }, [id]); // Changed dependency from slug to id
+  }, [id]);
 
   useEffect(() => {
     fetchAirline();
   }, [fetchAirline]);
+
+  // Demo data in case API fails (remove in production)
+  const demoBookingData = [
+    { name: 'Jan', bookings: 1200 },
+    { name: 'Feb', bookings: 1900 },
+    { name: 'Mar', bookings: 1500 },
+    { name: 'Apr', bookings: 1800 },
+    { name: 'May', bookings: 2100 },
+    { name: 'Jun', bookings: 2400 },
+    { name: 'Jul', bookings: 2600 },
+    { name: 'Aug', bookings: 2300 },
+    { name: 'Sep', bookings: 2000 },
+    { name: 'Oct', bookings: 1700 },
+    { name: 'Nov', bookings: 1400 },
+    { name: 'Dec', bookings: 1100 },
+  ];
+
+  const demoClassDistribution = [
+    { name: 'Economy', value: 65 },
+    { name: 'Premium Economy', value: 15 },
+    { name: 'Business', value: 15 },
+    { name: 'First Class', value: 5 }
+  ];
+
+  const COLORS = ['#00f0ff', '#00c8ff', '#0095ff', '#0062ff'];
 
   const calculateNewAverage = (currentAvg, currentCount, newScore) => {
     if (!currentAvg) return newScore;
@@ -40,12 +87,10 @@ const Airline = () => {
 
   const handleReviewSubmitted = useCallback((newReview) => {
     if (editingReview) {
-      // Update existing review
       setReviews(prev => prev.map(review => 
         review.id === newReview.id ? newReview : review
       ));
 
-      // Recalculate average score
       const newAvg = reviews.reduce((sum, review) => 
         sum + (review.id === newReview.id ? newReview.attributes.score : review.attributes.score), 
         0
@@ -59,7 +104,6 @@ const Airline = () => {
         }
       }));
     } else {
-      // Add new review
       setReviews(prev => [newReview, ...prev]);
       setAirline(prev => ({
         ...prev,
@@ -84,11 +128,9 @@ const Airline = () => {
     
     try {
       await axios.delete(`/api/v1/reviews/${reviewId}`);
-      
       const remainingReviews = reviews.filter(review => review.id !== reviewId);
       setReviews(remainingReviews);
       
-      // Update airline stats
       if (remainingReviews.length > 0) {
         const newAvg = remainingReviews.reduce((sum, review) => sum + review.attributes.score, 0) / remainingReviews.length;
         setAirline(prev => ({
@@ -198,6 +240,12 @@ const Airline = () => {
           >
             🧠 REVIEWS
           </button>
+          <button
+            className={`px-6 py-4 font-['Orbitron'] tracking-wider ${activeTab === 'analytics' ? 'text-[#00f0ff] border-b-2 border-[#00f0ff]' : 'text-[#f0f4ff]/50 hover:text-[#f0f4ff]'}`}
+            onClick={() => setActiveTab('analytics')}
+          >
+            📊 BOOKING ANALYTICS
+          </button>
         </div>
       </div>
 
@@ -274,6 +322,101 @@ const Airline = () => {
             >
               UPLOAD EXPERIENCE ↑
             </button>
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <div className="space-y-12">
+            <div>
+              <h3 className="font-['Orbitron'] text-2xl text-[#00f0ff] tracking-wider uppercase mb-6">📈 MONTHLY BOOKINGS</h3>
+              <div className="bg-[rgba(16,24,39,0.5)] border border-[#00f0ff]/10 rounded-xl p-6 h-96">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={bookingStats.monthly_bookings.length > 0 ? bookingStats.monthly_bookings : demoBookingData}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#00f0ff/20" />
+                    <XAxis dataKey="name" stroke="#00f0ff" />
+                    <YAxis stroke="#00f0ff" />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: '#0a0a1a',
+                        borderColor: '#00f0ff',
+                        color: '#f0f4ff'
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey="bookings" fill="#00f0ff" name="Bookings" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="font-['Orbitron'] text-2xl text-[#00f0ff] tracking-wider uppercase mb-6">🥧 CABIN CLASS DISTRIBUTION</h3>
+                <div className="bg-[rgba(16,24,39,0.5)] border border-[#00f0ff]/10 rounded-xl p-6 h-96 flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={bookingStats.cabin_distribution.length > 0 ? bookingStats.cabin_distribution : demoClassDistribution}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={120}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {bookingStats.cabin_distribution.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{
+                          backgroundColor: '#0a0a1a',
+                          borderColor: '#00f0ff',
+                          color: '#f0f4ff'
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-['Orbitron'] text-2xl text-[#00f0ff] tracking-wider uppercase mb-6">📊 BOOKING STATISTICS</h3>
+                <div className="bg-[rgba(16,24,39,0.5)] border border-[#00f0ff]/10 rounded-xl p-6 space-y-4">
+                  <div className="flex justify-between items-center py-3 border-b border-[#00f0ff]/10">
+                    <span className="font-['Rajdhani'] tracking-wider">Total Bookings</span>
+                    <span className="font-['Orbitron'] text-[#00f0ff]">
+                      {bookingStats.total_bookings.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 border-b border-[#00f0ff]/10">
+                    <span className="font-['Rajdhani'] tracking-wider">Most Popular Cabin</span>
+                    <span className="font-['Orbitron'] text-[#00f0ff]">
+                      {bookingStats.cabin_distribution.length > 0 
+                        ? bookingStats.cabin_distribution.reduce((a, b) => a.value > b.value ? a : b).name
+                        : 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-3">
+                    <span className="font-['Rajdhani'] tracking-wider">Peak Booking Month</span>
+                    <span className="font-['Orbitron'] text-[#00f0ff]">
+                      {bookingStats.monthly_bookings.length > 0 
+                        ? bookingStats.monthly_bookings.reduce((a, b) => a.bookings > b.bookings ? a : b).name
+                        : 'N/A'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
